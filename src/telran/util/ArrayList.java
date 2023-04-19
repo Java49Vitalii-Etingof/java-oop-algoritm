@@ -1,10 +1,10 @@
 package telran.util;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class ArrayList<T> implements List<T> {
 	private static final int DEFAULT_CAPACITY = 16;
-	private static final String T = null;
 	private T[] array;
 	private int size;
 
@@ -73,17 +73,16 @@ public class ArrayList<T> implements List<T> {
 	}
 
 	@Override
-	public T[] toArray(T[] newArray) {
-		T[] res = newArray;
-		if (newArray.length < size) {
-			res = (T[]) Arrays.copyOf(array, size, newArray.getClass());
-		} else {
-			System.arraycopy(array, 0, res, 0, size);
-			if (res.length > size) {
-				res[size] = null;
-			}
+	public T[] toArray(T[] array) {
+		if (array.length < size) {
+			array = Arrays.copyOf(array, size);
 		}
-		return res;
+		System.arraycopy(this.array, 0, array, 0, size);
+		if (array.length > size) {
+			array[size] = null;
+		}
+
+		return array;
 	}
 
 	@Override
@@ -118,4 +117,33 @@ public class ArrayList<T> implements List<T> {
 		return res;
 	}
 
+	@Override
+	public void sort() {
+		Arrays.sort(array, 0, size);
+
+	}
+
+		@Override
+	public void sort(Comparator<T> comp) {
+		boolean res = false;
+		do {
+			res = maxToEnd(comp);
+		} while (res == false);
+	}
+
+	private boolean maxToEnd(Comparator<T> comp) {
+
+		boolean flag = true;
+		for (int i = 0; i < size - 1; i++) {
+			if (comp.compare(array[i], array[i + 1]) > 0) {
+				T tmp = array[i + 1];
+				array[i + 1] = array[i];
+				array[i] = tmp;
+				flag = false;
+			}
+		}
+		return flag;
+	}
 }
+
+

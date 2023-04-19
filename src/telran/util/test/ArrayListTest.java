@@ -8,8 +8,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class ArrayListTest {
-	List<Integer> list;
-	Integer[] numbers = { 10, -20, 7, 50, 100, 30 };
+private static final int BIG_LENGTH = 100000;
+List<Integer> list;
+Integer[] numbers = {10, -20, 7, 50, 100, 30};
+	
 
 	@BeforeEach
 	void setUp() {
@@ -85,17 +87,67 @@ class ArrayListTest {
 		assertEquals(-20, list.get(0));	
 	}
 	@Test
-	void testToArray() {
+	void testToArrayForBigArray() {
+		Integer bigArray[] = new Integer[BIG_LENGTH];
+		for(int i = 0; i < BIG_LENGTH; i++) {
+			bigArray[i] = 10;
+		}
+		Integer actualArray[] = list.toArray(bigArray);
+		int size = list.size();
+		for(int i = 0; i < size; i++) {
+			assertEquals(numbers[i], actualArray[i]);
+		}
+		assertNull(actualArray[size]);
+		assertTrue(bigArray == actualArray);
+	}
+	@Test
+	void testToArrayForEmptyArray() {
+		Integer actualArray[] =
+				list.toArray(new Integer[0]);
+		assertArrayEquals(numbers, actualArray);
+	}
+	
+	@Test
+	void testSort() {
+		Integer expected[] = {-20, 7, 10, 30, 50, 100};
+		list.sort();
+		assertArrayEquals(expected, list.toArray(new Integer[0]));
+	}
+	
+	@Test
+	void testSortPersons() {
+		List<Person> persons = new ArrayList<>();
+		Person p1 = new Person(123, 25, "Vasya");
+		Person p2 = new Person(124, 20, "Asaf");
+		Person p3 = new Person(120, 50, "Arkady");
+		persons.add(p1);
+		persons.add(p2);
+		persons.add(p3);
+		Person expected[] = {p3, p1, p2};
+		persons.sort();
+		assertArrayEquals(expected, persons.toArray(new Person[0]));
+	}
+	@Test
+	void testSortPersonsByAge() {
+		List<Person> persons = new ArrayList<>();
+		Person p1 = new Person(123, 25, "Vasya");
+		Person p2 = new Person(124, 20, "Asaf");
+		Person p3 = new Person(120, 50, "Arkady");
+		persons.add(p1);
+		persons.add(p2);
+		persons.add(p3);
+		Person expected[] = {p2, p1, p3};
+		persons.sort(new PersonsAgeComparator());
+		assertArrayEquals(expected, persons.toArray(new Person[0]));
 		
-		Integer[] arrayListSize = new Integer[list.size()];
-		Integer[] arrayLessSize = new Integer[list.size()-1];
-		Integer[] arrayMoreSize = new Integer[list.size()+2];
-		Integer[] expectedList = {10, -20, 7, 50, 100, 30};
-		Integer[] expectedMoreList = {10, -20, 7, 50, 100, 30, null, null};
+	}
+	@Test
+	void testEvenOddComparator() {
+		list.add(17);
+		Integer expected[] = {-20, 10, 30, 50, 100, 17, 7};
+		list.sort(new EvenOddComparator());
+		assertArrayEquals(expected, list.toArray(new Integer[0]));
 		
-		assertArrayEquals(expectedList, list.toArray(arrayListSize));
-		assertArrayEquals(expectedList, list.toArray(arrayLessSize));
-		assertArrayEquals(expectedMoreList, list.toArray(arrayMoreSize));
 	}
 
 	private void runTest(Integer[] expected) {
@@ -125,5 +177,6 @@ class ArrayListTest {
 		 * numbers.get(0)); assertEquals(250, numbers.get(2)); assertEquals(300,
 		 * numbers.get(3));
 		 */ }
+	
 
 }
