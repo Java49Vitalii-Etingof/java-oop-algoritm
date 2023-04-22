@@ -8,10 +8,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class ArrayListTest {
-private static final int BIG_LENGTH = 100000;
-List<Integer> list;
-Integer[] numbers = {10, -20, 7, 50, 100, 30};
-	
+	private static final int BIG_LENGTH = 100000;
+	List<Integer> list;
+	Integer[] numbers = { 10, -20, 7, 50, 100, 30 };
 
 	@BeforeEach
 	void setUp() {
@@ -57,63 +56,67 @@ Integer[] numbers = {10, -20, 7, 50, 100, 30};
 	void testGetIndex() {
 		assertEquals(10, list.get(0));
 	}
+
 	@Test
 	void testIndexOf() {
 		list.add(3, 10);
 		list.add(50);
 		list.add(0, 30);
 		assertEquals(1, list.indexOf(10));
-		assertEquals(-1, list.indexOf(null));
+		assertEquals(-1, list.indexOf((Integer)null));
 		assertEquals(5, list.indexOf(50));
 		assertEquals(0, list.indexOf(30));
 	}
-	//*********************HW#4************************************************************************
+
+	// *********************HW#4************************************************************************
 	@Test
 	void testLastIndexOf() {
 		list.add(3, 10);
 		list.add(50);
 		list.add(0, 30);
 		assertEquals(4, list.LastIndexOf(10));
-		assertEquals(-1, list.indexOf(null));
+		assertEquals(-1, list.indexOf((Integer)null));
 		assertEquals(8, list.LastIndexOf(50));
 		assertEquals(7, list.LastIndexOf(30));
 	}
+
 	@Test
-      void testRemovePattern() {
+	void testRemovePattern() {
 		Integer pattern = 10;
 		Integer pattern1 = null;
 		assertEquals(true, list.remove(pattern));
 		assertEquals(false, list.remove(pattern1));
-		assertEquals(-20, list.get(0));	
+		assertEquals(-20, list.get(0));
 	}
+
 	@Test
 	void testToArrayForBigArray() {
 		Integer bigArray[] = new Integer[BIG_LENGTH];
-		for(int i = 0; i < BIG_LENGTH; i++) {
+		for (int i = 0; i < BIG_LENGTH; i++) {
 			bigArray[i] = 10;
 		}
 		Integer actualArray[] = list.toArray(bigArray);
 		int size = list.size();
-		for(int i = 0; i < size; i++) {
+		for (int i = 0; i < size; i++) {
 			assertEquals(numbers[i], actualArray[i]);
 		}
 		assertNull(actualArray[size]);
 		assertTrue(bigArray == actualArray);
 	}
+
 	@Test
 	void testToArrayForEmptyArray() {
-		Integer actualArray[] =
-				list.toArray(new Integer[0]);
+		Integer actualArray[] = list.toArray(new Integer[0]);
 		assertArrayEquals(numbers, actualArray);
 	}
-	
+
 	@Test
 	void testSort() {
-		Integer expected[] = {-20, 7, 10, 30, 50, 100};
+		Integer expected[] = { -20, 7, 10, 30, 50, 100 };
 		list.sort();
 		assertArrayEquals(expected, list.toArray(new Integer[0]));
 	}
-	
+
 	@Test
 	void testSortPersons() {
 		List<Person> persons = new ArrayList<>();
@@ -123,10 +126,11 @@ Integer[] numbers = {10, -20, 7, 50, 100, 30};
 		persons.add(p1);
 		persons.add(p2);
 		persons.add(p3);
-		Person expected[] = {p3, p1, p2};
+		Person expected[] = { p3, p1, p2 };
 		persons.sort();
 		assertArrayEquals(expected, persons.toArray(new Person[0]));
 	}
+
 	@Test
 	void testSortPersonsByAge() {
 		List<Person> persons = new ArrayList<>();
@@ -136,18 +140,47 @@ Integer[] numbers = {10, -20, 7, 50, 100, 30};
 		persons.add(p1);
 		persons.add(p2);
 		persons.add(p3);
-		Person expected[] = {p2, p1, p3};
-		persons.sort(new PersonsAgeComparator());
+		Person expected[] = { p3, p1, p2 };
+		persons.sort((prs1, prs2) -> Integer.compare(prs2.getAge(), prs1.getAge()));
 		assertArrayEquals(expected, persons.toArray(new Person[0]));
+	}
+
+	// ********************HW#5****************************************
+	@Test
+	void testEvenOddSorting() {
+		list.add(-17);
+		Integer expected[] = { -20, 10, 30, 50, 100, 7, -17 };
+		list.sort(ArrayListTest::evenOddCompare);
+		assertArrayEquals(expected, list.toArray(new Integer[0]));
+	}
+	
+	@Test
+	void testIndexOfPredicate() {
+		assertEquals(1, list.indexOf(a -> a < 0));
+		list.add(-17);
+		assertEquals(-1, list.indexOf(a -> a % 2 != 0 && a > 7));
 		
 	}
+	//*********************HW#6************************************
 	@Test
-	void testEvenOddComparator() {
-		list.add(17);
-		Integer expected[] = {-20, 10, 30, 50, 100, 17, 7};
-		list.sort(new EvenOddComparator());
-		assertArrayEquals(expected, list.toArray(new Integer[0]));
+	void testLastIndexOfPredicate() {
+		assertEquals(4, list.LastIndexOf(a -> a > 50));
+		list.add(-17);
+		assertEquals(6, list.indexOf(a -> a % 2 != 0 && a < 7));
 		
+	}
+	
+	@Test
+	void testRemoveIfAll() {
+		assertTrue(list.removeIf(a -> true));
+		assertEquals(0, list.size());
+	}
+	
+	@Test
+	void testRemoveIf() {
+		assertFalse(list.removeIf(a -> a  == null));
+		assertTrue(list.removeIf(a -> a > 0));
+		assertEquals(1, list.size());
 	}
 
 	private void runTest(Integer[] expected) {
@@ -158,25 +191,13 @@ Integer[] numbers = {10, -20, 7, 50, 100, 30};
 		}
 		assertArrayEquals(expected, actual);
 
-		/*
-		 * @Test
-		 * 
-		 * void testAddIndex() { ArrayList<Integer> numbers = new ArrayList<>(); for
-		 * (int i = 0; i < 15; i++) { numbers.add(i); } numbers.add(0, 50);
-		 * numbers.add(8, 74); numbers.add(17, 13); assertEquals(18, numbers.size());
-		 * assertEquals(50, numbers.get(0)); assertEquals(74, numbers.get(8));
-		 * assertEquals(13, numbers.get(17)); }
-		 */
-
-		/*
-		 * @Test void TestRemove() { ArrayList<Integer> numbers = new ArrayList<>();
-		 * numbers.add(50); numbers.add(100); numbers.add(150); numbers.add(200);
-		 * numbers.add(250); numbers.add(300); numbers.add(350); assertEquals(350,
-		 * numbers.remove(6)); assertEquals(200, numbers.remove(3)); assertEquals(50,
-		 * numbers.remove(0)); assertEquals(4, numbers.size()); assertEquals(100,
-		 * numbers.get(0)); assertEquals(250, numbers.get(2)); assertEquals(300,
-		 * numbers.get(3));
-		 */ }
-	
+		 }
+	static private int evenOddCompare(Integer a, Integer b) {
+		int res = Math.abs(a % 2) - Math.abs(b % 2);
+		if(res == 0) {
+			res = a % 2 == 0 ? a - b : b - a;
+		}
+		return res;
+	}
 
 }

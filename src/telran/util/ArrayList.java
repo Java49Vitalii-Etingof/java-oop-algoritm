@@ -2,6 +2,7 @@ package telran.util;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.function.Predicate;
 
 public class ArrayList<T> implements List<T> {
 	private static final int DEFAULT_CAPACITY = 16;
@@ -119,31 +120,77 @@ public class ArrayList<T> implements List<T> {
 
 	@Override
 	public void sort() {
-		Arrays.sort(array, 0, size);
+		sort((Comparator<T>) Comparator.naturalOrder());
 
 	}
 
-		@Override
+//*******************HW#5*********************************
+	@Override
 	public void sort(Comparator<T> comp) {
-		boolean res = false;
+		int n = size;
+		boolean flUnSort = true;
 		do {
-			res = maxToEnd(comp);
-		} while (res == false);
-	}
-
-	private boolean maxToEnd(Comparator<T> comp) {
-
-		boolean flag = true;
-		for (int i = 0; i < size - 1; i++) {
-			if (comp.compare(array[i], array[i + 1]) > 0) {
-				T tmp = array[i + 1];
-				array[i + 1] = array[i];
-				array[i] = tmp;
-				flag = false;
+			flUnSort = false;
+			n--;
+			for (int i = 0; i < n; i++) {
+				if (comp.compare(array[i], array[i + 1]) > 0) {
+					swap(i);
+					flUnSort = true;
+				}
 			}
-		}
-		return flag;
+		} while (flUnSort);
+
 	}
+
+	private void swap(int i) {
+		T tmp = array[i];
+		array[i] = array[i + 1];
+		array[i + 1] = tmp;
+
+	}
+
+	@Override
+	public int indexOf(Predicate<T> predicate) {
+		int res = -1;
+		int index = 0;
+		while (index < size && res == -1) {
+			if (predicate.test(array[index])) {
+				res = index;
+			}
+			index++;
+		}
+		return res;
+	}
+	//*********************HW#6************************************
+	@Override
+	public int LastIndexOf(Predicate<T> predicate) {
+		int res = -1;
+		int index = size - 1;
+		while (index >= 0 && res == -1) {
+			if (predicate.test(array[index])) {
+				res = index;
+			}
+			index--;
+		}
+		return res;
+	}
+
+	@Override
+	public boolean removeIf(Predicate<T> predicate) {
+		boolean res = false;
+		int initialSize = size;
+		int index = 0, i = 0 ;
+		while (i < initialSize) {
+			if (!predicate.test(array[i])) {
+				array[index] = array[i];
+				index++;
+			}
+			i++;
+		}
+		size = index;
+		if (initialSize != size)
+			res = true;
+		return res;
+	}
+
 }
-
-
