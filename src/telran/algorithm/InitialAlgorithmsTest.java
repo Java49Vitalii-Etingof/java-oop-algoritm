@@ -6,14 +6,17 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
+import java.util.Comparator;
+
 import static telran.algorithm.InitialAlgorithms.*;
 import org.junit.Assert;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-class InitialAlgorithmsTest {
+class InitialAlgorithmsTest<T> {
 	int N_NUMBERS = 100000;
 	 short[] array;
+	private int T;
 void setUpBigArray() {
 	array = new short[N_NUMBERS];
 	 for(int i = 0; i < N_NUMBERS; i++) {
@@ -21,7 +24,7 @@ void setUpBigArray() {
 	 }
 }
 @Test
-//@Disabled
+@Disabled
 void bubbleSortTest() {
 	setUpBigArray();
 	bubbleSort(array);
@@ -67,8 +70,42 @@ void bubbleSortTest() {
 			assertEquals(-1,
 					getMaxPositiveWithNegativeReflect(array2));
 		}
-	}
-	
+		@Test
+		@Disabled
+		void maxValueComplexityNTest() {
+			assertEquals(Long.MAX_VALUE, getMaxValueComplexityN());
+		}
+		@Test
+		void maxValueComplexityLogNTest() {
+			assertEquals(Long.MAX_VALUE, getMaxValueComplexityLogN());
+		}
+		private Long getMaxValueComplexityN() {
+			long res = 1;
+			while(res > 0) {
+				res++;
+			}
+			return res - 1;
+		}
+		private Long getMaxValueComplexityLogN() {
+			long res = 1;
+			while(res > 0) {
+				res *= 2;
+			}
+			return res - 1;
+		}
+		@Test
+		void binarySearchTest() {
+			Integer ar[] = { 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 20, 40 };
+			assertEquals(-14, binarySearch(ar, 3, Integer::compare));
+			assertEquals(3, binarySearch(ar, 2, Integer::compare ));
+			assertEquals(-1, binarySearch(ar, 0, Integer::compare));
+			assertEquals(13, binarySearch(ar, 4, Integer::compare));
+			assertEquals(0, binarySearch(ar, 1, Integer::compare));
+			assertEquals(-16, binarySearch(ar, 25, Integer::compare));
+			assertEquals(-17, binarySearch(ar, 45, Integer::compare));
+		}
+		
+}
 
 	
 
