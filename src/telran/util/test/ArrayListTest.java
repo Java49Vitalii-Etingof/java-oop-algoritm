@@ -28,6 +28,9 @@ class ArrayListTest {
 
 	@Test
 	void testAddIndex() {
+		assertThrowsExactly(IndexOutOfBoundsException.class, () -> list.add(-1, 20));
+		assertThrowsExactly(IndexOutOfBoundsException.class, () -> list.add(list.size() + 1, 20));
+
 		Integer[] expected0_500 = { 500, 10, -20, 7, 50, 100, 30 };
 		Integer[] expected0_500_3_700 = { 500, 10, -20, 700, 7, 50, 100, 30 };
 		Integer[] expected0_500_3_700_8_300 = { 500, 10, -20, 700, 7, 50, 100, 30, 300 };
@@ -41,6 +44,8 @@ class ArrayListTest {
 
 	@Test
 	void testRemoveIndex() {
+		assertThrowsExactly(IndexOutOfBoundsException.class, () -> list.remove(-1));
+		assertThrowsExactly(IndexOutOfBoundsException.class, () -> list.remove(list.size()));
 		Integer[] expectedNo10 = { -20, 7, 50, 100, 30 };
 		Integer[] expectedNo10_50 = { -20, 7, 100, 30 };
 		Integer[] expectedNo10_50_30 = { -20, 7, 100 };
@@ -55,6 +60,9 @@ class ArrayListTest {
 	@Test
 	void testGetIndex() {
 		assertEquals(10, list.get(0));
+		assertThrowsExactly(IndexOutOfBoundsException.class, () -> list.get(list.size()));
+		assertThrowsExactly(IndexOutOfBoundsException.class, () -> list.get(-1));
+		assertThrowsExactly(IndexOutOfBoundsException.class, () -> list.get(15000));
 	}
 
 	@Test
@@ -63,7 +71,7 @@ class ArrayListTest {
 		list.add(50);
 		list.add(0, 30);
 		assertEquals(1, list.indexOf(10));
-		assertEquals(-1, list.indexOf((Integer)null));
+		assertEquals(-1, list.indexOf((Integer) null));
 		assertEquals(5, list.indexOf(50));
 		assertEquals(0, list.indexOf(30));
 	}
@@ -75,7 +83,7 @@ class ArrayListTest {
 		list.add(50);
 		list.add(0, 30);
 		assertEquals(4, list.LastIndexOf(10));
-		assertEquals(-1, list.indexOf((Integer)null));
+		assertEquals(-1, list.indexOf((Integer) null));
 		assertEquals(8, list.LastIndexOf(50));
 		assertEquals(7, list.LastIndexOf(30));
 	}
@@ -153,32 +161,33 @@ class ArrayListTest {
 		list.sort(ArrayListTest::evenOddCompare);
 		assertArrayEquals(expected, list.toArray(new Integer[0]));
 	}
-	
+
 	@Test
 	void testIndexOfPredicate() {
 		assertEquals(1, list.indexOf(a -> a < 0));
 		list.add(-17);
 		assertEquals(-1, list.indexOf(a -> a % 2 != 0 && a > 7));
-		
+
 	}
-	//*********************HW#6************************************
+
+	// *********************HW#6************************************
 	@Test
 	void testLastIndexOfPredicate() {
 		assertEquals(4, list.LastIndexOf(a -> a > 50));
 		list.add(-17);
 		assertEquals(6, list.indexOf(a -> a % 2 != 0 && a < 7));
-		
+
 	}
-	
+
 	@Test
 	void testRemoveIfAll() {
 		assertTrue(list.removeIf(a -> true));
 		assertEquals(0, list.size());
 	}
-	
+
 	@Test
 	void testRemoveIf() {
-		assertFalse(list.removeIf(a -> a  == null));
+		assertFalse(list.removeIf(a -> a == null));
 		assertTrue(list.removeIf(a -> a > 0));
 		assertEquals(1, list.size());
 	}
@@ -191,10 +200,11 @@ class ArrayListTest {
 		}
 		assertArrayEquals(expected, actual);
 
-		 }
+	}
+
 	static private int evenOddCompare(Integer a, Integer b) {
 		int res = Math.abs(a % 2) - Math.abs(b % 2);
-		if(res == 0) {
+		if (res == 0) {
 			res = a % 2 == 0 ? a - b : b - a;
 		}
 		return res;

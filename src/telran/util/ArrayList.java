@@ -37,6 +37,9 @@ public class ArrayList<T> implements List<T> {
 	public void add(int index, T obj) {
 		if (size == array.length)
 			reallocate();
+		if (index < 0 || index > size) {
+			throw new IndexOutOfBoundsException(index);
+		}
 		System.arraycopy(array, index, array, index + 1, size - index);
 		array[index] = obj;
 		size++;
@@ -45,15 +48,23 @@ public class ArrayList<T> implements List<T> {
 
 	@Override
 	public T remove(int index) {
+		if (index < 0 || index >= size) {
+			throw new IndexOutOfBoundsException(index);
+		}
 		T remove = array[index];
 		System.arraycopy(array, index + 1, array, index, size - 1 - index);
 		size--;
-		return remove;
+		T res = remove;
+		return res;
 	}
 
 	@Override
 	public T get(int index) {
-		return array[index];
+		if (index < 0 || index >= size) {
+			throw new IndexOutOfBoundsException(index);
+		}
+		T res = array[index];
+		return res;
 	}
 
 	@Override
@@ -161,7 +172,8 @@ public class ArrayList<T> implements List<T> {
 		}
 		return res;
 	}
-	//*********************HW#6************************************
+
+	// *********************HW#6************************************
 	@Override
 	public int LastIndexOf(Predicate<T> predicate) {
 		int res = -1;
@@ -179,7 +191,7 @@ public class ArrayList<T> implements List<T> {
 	public boolean removeIf(Predicate<T> predicate) {
 		boolean res = false;
 		int initialSize = size;
-		int index = 0, i = 0 ;
+		int index = 0, i = 0;
 		while (i < initialSize) {
 			if (!predicate.test(array[i])) {
 				array[index] = array[i];
