@@ -93,46 +93,28 @@ public class ArrayList<T> implements List<T> {
 		if (ar.length > size) {
 			ar[size] = null;
 		}
-
 		return ar;
 	}
 
 	@Override
-	public int indexOf(T pattern) {
-		int res = -1;
-		int index = 0;
-		while (index < size && res == -1) {
-			if (isEqual(array[index], pattern)) {
-				res = index;
-			}
-			index++;
-		}
-		return res;
+	public int indexOf(T pattern) {	
+		return indexOf(obj -> isEqual(obj, pattern));
 	}
-
 	private boolean isEqual(T object, T pattern) {
-
 		return pattern == null ? object == pattern : pattern.equals(object);
 	}
 
 	@Override
 	public int lastIndexOf(T pattern) {
-		int res = -1;
-		int index = size - 1;
-		while (index >= 0 && res == -1) {
-			if (isEqual(array[index], pattern)) {
-				res = index;
-			}
-			index--;
-		}
-		return res;
+		
+		return lastIndexOf(obj -> isEqual(obj, pattern));
 	}
 
 	//@SuppressWarnings("unchecked")
 	@SuppressWarnings("unchecked")
 	@Override
 	public void sort() {
-		sort((Comparator<T>)Comparator.naturalOrder());
+		sort((Comparator<T>) Comparator.naturalOrder());
 		
 	}
 
@@ -189,14 +171,7 @@ public class ArrayList<T> implements List<T> {
 	@Override
 	public boolean removeIf(Predicate<T> predicate) {
 		int oldSize = size;
-//		int i = 0;
-//		while(i < size) {
-//			if(predicate.test(array[i])) {
-//				remove(i);
-//			} else {
-//				i++;
-//			}
-//		}
+
 		for(int i = size - 1; i >= 0; i--) {
 			if(predicate.test(array[i])) {
 				remove(i);
