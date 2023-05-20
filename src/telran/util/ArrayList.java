@@ -2,12 +2,32 @@ package telran.util;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
 public class ArrayList<T> implements List<T> {
 	private static final int DEFAULT_CAPACITY = 16;
 	private T[] array;
 	private int size;
+
+	private class ArrayListIterator implements Iterator<T> {
+		int currentIndex = 0;
+
+		@Override
+		public boolean hasNext() {
+			return currentIndex < size;
+		}
+
+		@Override
+		public T next() {
+			if (!hasNext()) {
+				throw new NoSuchElementException();
+			}
+			return array[currentIndex++];
+		}
+
+	}
 
 	@SuppressWarnings("unchecked")
 	public ArrayList(int capacity) {
@@ -74,72 +94,27 @@ public class ArrayList<T> implements List<T> {
 	}
 
 	@Override
-	public boolean remove(T pattern) {
-		boolean res = false;
-		int index = indexOf(pattern);
-		if (index > -1) {
-			res = true;
-			remove(index);
-		}
-		return res;
-	}
-
-	@Override
-	public T[] toArray(T[] ar) {
-		if (ar.length < size) {
-			ar = Arrays.copyOf(ar, size);
-		}
-		System.arraycopy(array, 0, ar, 0, size);
-		if (ar.length > size) {
-			ar[size] = null;
-		}
-		return ar;
-	}
-
-	@Override
-	public int indexOf(T pattern) {	
-		return indexOf(obj -> isEqual(obj, pattern));
-	}
-	private boolean isEqual(T object, T pattern) {
-		return pattern == null ? object == pattern : pattern.equals(object);
-	}
-
-	@Override
-	public int lastIndexOf(T pattern) {
-		
-		return lastIndexOf(obj -> isEqual(obj, pattern));
-	}
-
-	//@SuppressWarnings("unchecked")
-	@SuppressWarnings("unchecked")
-	@Override
-	public void sort() {
-		sort((Comparator<T>) Comparator.naturalOrder());
-		
-	}
-
-	@Override
 	public void sort(Comparator<T> comp) {
 		int n = size;
 		boolean flUnSort = true;
 		do {
 			flUnSort = false;
 			n--;
-			for(int i = 0; i < n; i++) {
+			for (int i = 0; i < n; i++) {
 				if (comp.compare(array[i], array[i + 1]) > 0) {
 					swap(i);
 					flUnSort = true;
 				}
 			}
-		}while(flUnSort);
-		
+		} while (flUnSort);
+
 	}
 
 	private void swap(int i) {
 		T tmp = array[i];
 		array[i] = array[i + 1];
 		array[i + 1] = tmp;
-		
+
 	}
 
 	@Override
@@ -171,13 +146,17 @@ public class ArrayList<T> implements List<T> {
 	@Override
 	public boolean removeIf(Predicate<T> predicate) {
 		int oldSize = size;
-
-		for(int i = size - 1; i >= 0; i--) {
-			if(predicate.test(array[i])) {
+		for (int i = size - 1; i >= 0; i--) {
+			if (predicate.test(array[i])) {
 				remove(i);
-			} 
+			}
 		}
 		return oldSize > size;
+	}
+
+	@Override
+	public Iterator<T> iterator() {
+		return new ArrayListIterator();
 	}
 
 }

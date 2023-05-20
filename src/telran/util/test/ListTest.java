@@ -125,10 +125,8 @@ abstract class ListTest extends CollectionTest {
 		assertEquals(-1, list.indexOf(a -> a % 2 != 0 && a > 7));
 	}
 
-	protected void runTest(Integer[] expected) {
-		Integer[] actual = list.toArray(expected);		
-		assertArrayEquals(expected, actual);
-	}
+	
+	
 
 	static private int evenOddCompare(Integer a, Integer b) {
 		int res = Math.abs(a % 2) - Math.abs(b % 2);
