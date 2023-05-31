@@ -4,31 +4,42 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
-public interface Collection<T> extends Iterable<T> {
+public interface Collection<T> extends Iterable<T>{
 boolean add(T obj);
 int size();
 boolean remove(T pattern);
-
-boolean removeIf(Predicate<T> predicate);
-boolean contains(T pattern);
-default boolean isEqual(T object, T pattern) {
-	return pattern == null ? object == pattern : pattern.equals(object);
-}
-default T[] toArray(T[] array) {
+default T[] toArray(T[] ar) {
 	int size = size();
-	if (array.length < size) {
-		array = Arrays.copyOf(array, size);
+	if (ar.length < size) {
+		ar = Arrays.copyOf(ar, size);
 	}
 	int index = 0;
-	Iterator<T> it = iterator();
-	
-	while(it.hasNext()) {	
-		array[index++] = it.next();
+	for(T obj: this) {
+		ar[index++] = obj;
 	}
-	if(array.length > size) {
-		array[size] = null;
+	if (ar.length > size) {
+		ar[size] = null;
 	}
-	return array;	
-		
+
+	return ar;
 }
+default boolean removeIf(Predicate<T> predicate) {
+	int oldSize = size();
+	Iterator<T> it = iterator();
+	while(it.hasNext()) {
+		T obj = it.next();
+		if(predicate.test(obj)) {
+			it.remove();
+		}
+	}
+	return oldSize > size();
+}
+boolean contains(T pattern);
+default  boolean isEqual(T object, T pattern) {
+
+	return pattern == null  ? object == pattern : pattern.equals(object);
+}
+default void clear() {
+	removeIf(element -> true);
+};
 }
