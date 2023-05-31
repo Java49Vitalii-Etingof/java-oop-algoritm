@@ -201,7 +201,7 @@ public class TreeSet<T> implements Set<T> {
 			}
 		} else {
 			if (child != null) {
-				child.parent = null;
+				//child.parent = null;
 				root = child;
 			}
 		}

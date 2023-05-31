@@ -20,7 +20,7 @@ class TreeSetTest extends SetTest {
 	@Test
 	void clearPerformance() {
 		Collection<Integer> bigCollection = getCollection();
-		for(int i = 0; i < 10000; i++) {
+		for(int i = 0; i < 100000; i++) {
 			bigCollection.add(i);
 		}
 		bigCollection.clear();
