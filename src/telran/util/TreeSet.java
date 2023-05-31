@@ -160,7 +160,7 @@ public class TreeSet<T> implements Set<T> {
 	}
 
 	private void removeNode(Node<T> node) {
-		if (Junction(node)) {
+		if (isJunction(node)) {
 			removeJunction(node);
 		} else {
 			removeNonJunction(node);
@@ -169,7 +169,7 @@ public class TreeSet<T> implements Set<T> {
 
 	}
 
-	private boolean Junction(Node<T> node) {
+	private boolean isJunction(Node<T> node) {
 		return node.left != null && node.right != null;
 	}
 
@@ -202,6 +202,7 @@ public class TreeSet<T> implements Set<T> {
 		} else {
 			if (child != null) {
 				child.parent = null;
+				root = child;
 			}
 		}
 
