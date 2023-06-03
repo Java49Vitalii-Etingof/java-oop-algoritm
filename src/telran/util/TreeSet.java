@@ -1,10 +1,11 @@
 package telran.util;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class TreeSet<T> implements Set<T> {
+public class TreeSet<T> implements SortedSet<T> {
 	private static class Node<T> {
 		T obj;
 		Node<T> parent;
@@ -15,11 +16,26 @@ public class TreeSet<T> implements Set<T> {
 			this.obj = obj;
 		}
 
+		void setNulls() {
+			parent = null;
+			left = null;
+			right = null;
+			obj = null;
+		}
+
 	}
 
 	private Node<T> root;
 	private Comparator<T> comp;
 	private int size;
+
+	public TreeSet(Comparator<T> comp) {
+		this.comp = comp;
+	}
+
+	public TreeSet() {
+		this((Comparator<T>) Comparator.naturalOrder());
+	}
 
 	private class TreeSetIterator implements Iterator<T> {
 		Node<T> current;
@@ -56,14 +72,6 @@ public class TreeSet<T> implements Set<T> {
 			removeNode(prev);
 			flNext = false;
 		}
-	}
-
-	public TreeSet(Comparator<T> comp) {
-		this.comp = comp;
-	}
-
-	public TreeSet() {
-		this((Comparator<T>) Comparator.naturalOrder());
 	}
 
 	@Override
@@ -160,7 +168,7 @@ public class TreeSet<T> implements Set<T> {
 	}
 
 	private void removeNode(Node<T> node) {
-		if (isJunction(node)) {
+		if (node.left != null && node.right != null) {
 			removeJunction(node);
 		} else {
 			removeNonJunction(node);
@@ -169,42 +177,38 @@ public class TreeSet<T> implements Set<T> {
 
 	}
 
-	private boolean isJunction(Node<T> node) {
-		return node.left != null && node.right != null;
-	}
-
 	private void removeJunction(Node<T> node) {
-		Node<T> substitute = getMostLeft(node.right);
+		Node<T> substitute = getMostNodeFrom(node.left);
 		node.obj = substitute.obj;
 		removeNonJunction(substitute);
+
 	}
 
-	private Node<T> getMostLeft(Node<T> right) {
-		while (right.left != null) {
-			right = right.left;
+	private Node<T> getMostNodeFrom(Node<T> node) {
+		while (node.right != null) {
+			node = node.right;
 		}
-		return right;
+		return node;
 	}
 
 	private void removeNonJunction(Node<T> node) {
 
-		Node<T> child = node.left == null ? node.right : node.left;
 		Node<T> parent = node.parent;
-		if (parent != null) {
-			if (parent.right == node) {
-				parent.right = child;
-			} else {
-				parent.left = child;
-			}
-			if (child != null) {
-				child.parent = parent;
-			}
+		Node<T> child = node.left == null ? node.right : node.left;
+		if (parent == null) {
+			root = child;
 		} else {
-			if (child != null) {
-				//child.parent = null;
-				root = child;
+			if (node == parent.left) {
+				parent.left = child;
+			} else {
+				parent.right = child;
 			}
+
 		}
+		if (child != null) {
+			child.parent = parent;
+		}
+		node.setNulls();
 
 	}
 
@@ -218,6 +222,58 @@ public class TreeSet<T> implements Set<T> {
 	public Iterator<T> iterator() {
 
 		return new TreeSetIterator();
+	}
+
+	@Override
+	public T first() {
+		if (size == 0) {
+			throw new NoSuchElementException("this set is empty");
+		}
+		return getLeast(root).obj;
+	}
+
+	@Override
+	public T last() {
+		if (size == 0) {
+			throw new NoSuchElementException("this set is empty");
+		}
+		return getMostNodeFrom(root).obj;
+	}
+
+	@Override
+	public T ceiling(T key) {
+		if (key == null) {
+			throw new NullPointerException("key must not be null");
+		}
+		T res;
+		T[] array = toArray((T[]) new Object[size]);
+		int index = Arrays.binarySearch(array, key, comp);
+		if (index >= 0) {
+			res = array[index];
+		} else {
+			index = -(index + 1);
+			res = (index < size) ? array[index] : null;
+		}
+		
+
+		return res;
+	}
+
+	@Override
+	public T floor(T key) {
+		if (key == null) {
+			throw new NullPointerException("key must not be null");
+		}
+		T res;
+		T[] array = toArray((T[]) new Object[size]);
+		int index = Arrays.binarySearch(array, key, comp);
+		if (index >= 0) {
+			res = array[index - 1];
+		} else {
+			index = -(index + 2);
+			res = (index >= 0) ? array[index] : null;
+		}
+		return res;
 	}
 
 }
