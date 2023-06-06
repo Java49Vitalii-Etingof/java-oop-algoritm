@@ -1,6 +1,5 @@
 package telran.util;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -226,54 +225,48 @@ public class TreeSet<T> implements SortedSet<T> {
 
 	@Override
 	public T first() {
-		if (size == 0) {
-			throw new NoSuchElementException("this set is empty");
+		T res = null;
+		if (root == null) {
+			throw new NoSuchElementException();
 		}
-		return getLeast(root).obj;
+		res = getLeast(root).obj;
+		return res;
 	}
 
 	@Override
 	public T last() {
-		if (size == 0) {
-			throw new NoSuchElementException("this set is empty");
+		T res = null;
+		if (root == null) {
+			throw new NoSuchElementException();
 		}
-		return getMostNodeFrom(root).obj;
-	}
-
-	@Override
-	public T ceiling(T key) {
-		if (key == null) {
-			throw new NullPointerException("key must not be null");
-		}
-		T res;
-		T[] array = toArray((T[]) new Object[size]);
-		int index = Arrays.binarySearch(array, key, comp);
-		if (index >= 0) {
-			res = array[index];
-		} else {
-			index = -(index + 1);
-			res = (index < size) ? array[index] : null;
-		}
-		
-
+		res = getMostNodeFrom(root).obj;
 		return res;
 	}
 
 	@Override
-	public T floor(T key) {
-		if (key == null) {
-			throw new NullPointerException("key must not be null");
+	public T floor(T element) {
+
+		return floorCeiling(element, true);
+	}
+
+	@Override
+	public T ceiling(T element) {
+
+		return floorCeiling(element, false);
+	}
+
+	private T floorCeiling(T pattern, boolean isFloor) {
+		T res = null;
+		int compRes = 0;
+		Node<T> current = root;
+		while (current != null && (compRes = comp.compare(pattern, current.obj)) != 0) {
+			if ((compRes < 0 && !isFloor) || (compRes > 0 && isFloor)) {
+				res = current.obj;
+			}
+			current = compRes < 0 ? current.left : current.right;
 		}
-		T res;
-		T[] array = toArray((T[]) new Object[size]);
-		int index = Arrays.binarySearch(array, key, comp);
-		if (index >= 0) {
-			res = array[index - 1];
-		} else {
-			index = -(index + 2);
-			res = (index >= 0) ? array[index] : null;
-		}
-		return res;
+		return current == null ? res : current.obj;
+
 	}
 
 }

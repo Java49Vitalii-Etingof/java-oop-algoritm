@@ -1,7 +1,6 @@
 package telran.util.test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.NoSuchElementException;
 
@@ -14,41 +13,45 @@ public abstract class SortedSetTest extends SetTest {
 
 	@Override
 	protected Integer[] getActual(Integer[] array, int size) {
-		//System.out.println("Sorted test");
+		//for iterating in the sorted order no need an additional sorting
 		return array;
 	}
 	@Test
 	void firstTest() {
 		SortedSet<Integer> sortedSet = (SortedSet<Integer>)set;
+		
 		assertEquals(-20, sortedSet.first());
-		collection.clear();
-		assertThrowsExactly(NoSuchElementException.class, () -> sortedSet.first());
+		sortedSet.clear();
+		assertThrowsExactly(NoSuchElementException.class, ()->sortedSet.first());
 	}
 	@Test
 	void lastTest() {
 		SortedSet<Integer> sortedSet = (SortedSet<Integer>)set;
 		assertEquals(100, sortedSet.last());
-		collection.clear();
-		assertThrowsExactly(NoSuchElementException.class, () -> sortedSet.last());
+		sortedSet.clear();
+		assertThrowsExactly(NoSuchElementException.class, ()->sortedSet.first());
 	}
-	//{ 10, -20, 7, 50, 100, 30 };
 	@Test
 	void ceilingTest() {
+		//{ 10, -20, 7, 50, 100, 30 };
 		SortedSet<Integer> sortedSet = (SortedSet<Integer>)set;
-		assertThrowsExactly(NullPointerException.class, () -> sortedSet.ceiling(null));
-		assertEquals(100, sortedSet.ceiling(99));
-		assertEquals(null, sortedSet.ceiling(105));
-		assertEquals(-20, sortedSet.ceiling(-30));
-		assertEquals(50, sortedSet.ceiling(49));
+		runTestForExisted(sortedSet, true);
+		assertEquals(50, sortedSet.ceiling(35));
+		assertEquals(-20, sortedSet.ceiling(-40));
+		assertNull(sortedSet.ceiling(101) );
+	}
+	private void runTestForExisted(SortedSet<Integer> sortedSet, boolean isCeiling) {
+		assertEquals(-20, isCeiling ? sortedSet.ceiling(-20) :sortedSet.floor(-20));
+		assertEquals(50, isCeiling ? sortedSet.ceiling(50) :sortedSet.floor(50));
+		assertEquals(100, isCeiling ? sortedSet.ceiling(100) :sortedSet.floor(100));
 	}
 	@Test
 	void floorTest() {
 		SortedSet<Integer> sortedSet = (SortedSet<Integer>)set;
-		assertThrowsExactly(NullPointerException.class, () -> sortedSet.ceiling(null));
-		assertEquals(50, sortedSet.floor(99));
-		assertEquals(100, sortedSet.floor(105));
-		assertEquals(null, sortedSet.floor(-30));
-		assertEquals(30, sortedSet.floor(49));
+		runTestForExisted(sortedSet, false);
+		assertEquals(50, sortedSet.floor(55));
+		assertEquals(100, sortedSet.floor(101));
+		assertNull(sortedSet.floor(-40) );
 	}
 
 }

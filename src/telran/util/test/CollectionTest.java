@@ -18,7 +18,7 @@ import telran.util.Collection;
 import telran.util.List;
 
 public abstract class CollectionTest {
-//TODO move tests of interface collection methods (5 methods) from ListTest
+//move tests of interface collection methods (5 methods) from ListTest
 //	to here
 	protected Integer[] numbers = { 10, -20, 7, 50, 100, 30 };
 	protected Collection<Integer> collection;
