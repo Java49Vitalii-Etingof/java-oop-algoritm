@@ -50,22 +50,21 @@ class PrimitiveStreamTest {
 		assertEquals(array.length, set.size());
 
 	}
-	
+
 	@Test
 	void shuffleTest() {
 		for (int i = 0; i < N_RUNS; i++) {
 			int[] array = randomUnique(N_NUMBERS, MIN_NUMBER, MAX_NUMBER);
 			int[] shuffledArray = shuffle(array);
 			assertTrue(array.length == shuffledArray.length);
-			HashSet<Integer>set = new HashSet<>();
-			for(int num: shuffledArray) {
-				 set.add(num);
-			 }
-			for (int num: array) {
-				 assertTrue(set.contains(num));
-			 }			
+			HashSet<Integer> set = new HashSet<>();
+			for (int num : shuffledArray) {
+				set.add(num);
+			}
+			for (int num : array) {
+				assertTrue(set.contains(num));
+			}
 		}
 	}
-	
 
 }
